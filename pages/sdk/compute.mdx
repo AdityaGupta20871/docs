@@ -114,33 +114,19 @@ Returns the `UsageWithLimits` object.
 
 ```js
 interface UsageWithLimits {
-  used: {
-    bandwidth?: number, // the bytes of bandwidth used for the current subscription
-    buildExecution?: number, // the seconds of build execution done for the current subscription
-    concurrentBuild?: number,// the number of concurrent builds in progress
-    storageArweave?: number, // the bytes of used Arweave storage for the current subscription
-    storageIPFS?: number, // the bytes of used IPFS storage for the current subscription
-    deploymentsPerDay?: number, // number of deployments an organization can have one one day
-    domains?: number, // the number of domains and subdomain an organization has
-    hnsDomains?: number,// the number of hns domains an organization has
-    ensDomains?: number,// the number of ens domains an organization has
-    environments?: number,// the number of deployment environments an organization has
-    numberOfRequests?: number,// the number of requests the organization has had till now
-    passwordProtection?: number,; // 1 - if organization has support for password protection, otherwise 0.
-  },
+    used: {
+    computeCredit?: number; // the amount used by organization, in usd
+    computeBuildExecution?: number; // the time used for builds, in seconds
+    numberOfRequests?: number; //the number of requests organization has had until now
+    bandwidth?: number; //the bytes of bandwith used for current subscription
+    domains?: number; //the number of domains and subdomains an organization has
+  };
   limit: {
-    bandwidth?: number, // the bandwidth limit for the current subscription
-    buildExecution?: number,// the build execution limit for the current subscription
-    concurrentBuild?: number, // how many concurrent builds can the organization have with the current subscription plan
-    storageArweave?: number,  // the limit in bytes for the Arweave storage for the current subscription
-    storageIPFS?: number, // the limit in bytes for the IPFS storage for the current subscription
-    deploymentsPerDay?: number,// the limit of how many deployments can an organization have per day
-    domains?: number,// the limit on how many domains and subdomains can an organization have
-    hnsDomains?: number, //  the limit on how many hns domains can an organization have
-    ensDomains?: number,// the limit on how many ens domains can an organization have
-    environments?: number, // the limit on how many deployment environment can an organization have
-    membersLimit?: number,// how many members can an organization have
-  }
+    computeCredit?: number; // the amount limit for organization, in usd
+    computeBuildExecution?: number; // the time limit for builds, in seconds
+    bandwidth?: number; //the limit of bandwith for subscription
+    domains?: number; //the limit on how many domains and subdomains can an organization have
+  };
 }
 ```
 
@@ -166,9 +152,9 @@ Returns an object of type `Cluster`.
 interface Cluster {
   id: string; //id of a cluster
   name: string; //name of a cluster
-  url: string; //docker image 
+  url: string; //docker image
   proivder: ProviderEnum; //docker image provider (currently only dockerhub is supported)
-  createdBy: string; //user that created cluster
+  createdBy: string; //id of the user that created cluster
   state: ClusterStateEnum; //state of a cluster
   createdAt: Date; 
   updatedAt: Date;
@@ -240,8 +226,8 @@ Returns an object of type `ClusterFundsUsage`.
 
 ```js
 interface ClusterFundsUsage {
-    dailyUsage: number; //cluster daily usage in uakt
-    usedTillNow: number; //cluster daily usage in uakt
+    dailyUsage: number; //cluster daily usage in usd
+    usedTillNow: number; //cluster daily usage in usd
 }
 ```
 
@@ -280,7 +266,7 @@ interface InstanceDetailed {
   cluster: string; //instance cluster id
   activeDeployment: string; //id of active deployment
   latestUrlPreview: string; //latest instance url
-  agreedMachineImageType: MachineImageType; //compute machine information
+  agreedMachine: MachineImageType; //compute machine information
   healthCheck: HealthCheck; //instance health check endpoint information
   cpu: number; //compute machine cpu
   memory: string; //compute machine memory
@@ -309,7 +295,7 @@ const instanceResponse: InstanceResponse =
   configuration: {
     image: "crccheck/hello-world",
     tag: "latest",
-    instanceCount: 1,
+    scale: 1,
     ports: [{ containerPort: 8000, exposedPort: 8000 }],
     env: [],
     commands: [],
@@ -327,18 +313,19 @@ const instanceResponse: InstanceResponse =
 Params:
 
 - `clusterName`: name of cluster
-- `healthCheckPath`: health check path
-- `healthCheckPort`: container port on which health check should be done
 - `configuration`: the name of the variable.
   - `image`: dockerhub image url (should be publicly available).
   - `tag`: tag for docker image.
-  - `instanceCount`: number of instances that should be created.
+  - `scale`: number of instances that should be created.
   - `ports`: list of port mappings.
   - `env`: list of environment variables.
   - `commands`: list of executables for docker CMD command
   - `args`: list of params for docker CMD command 
   - `region`: region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
   - `machineImageName`: name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
+  - `healthCheckConfig`:
+    - `path`: path on which health check should be done
+    - `port`: container port on which health check should be done
 
 - `Port`: 
   - `containerPort`: container port that will be mapped
@@ -390,14 +377,14 @@ interface Instance {
   cluster: string; //instance cluster id
   activeDeployment: string; //id of active deployment
   latestUrlPreview: string; //latest instance url
-  agreedMachineImageType: MachineImageType; //compute machine information
+  agreedMachine: MachineImageType; //compute machine information
   healthCheck: HealthCheck; //instance health check endpoint information
   createdAt: Date;
   updatedAt: Date;
 };
 
 interface MachineImageType {
-    machineType: string; //compute machine type
+    machineName: string; //compute machine type
     agreementDate: number; //date of deploying instance
 }
 
@@ -535,7 +522,6 @@ Returns an `InstanceDeployment` object and list of live logs.
 interface InstanceDeployment {
   id: string; //id of deployment
   type: DeploymentTypeEnum; //type of deployment
-  commitId: string; //id of commit
   status: DeploymentStatusEnum; //status of deployment
   buildTime: number; //deployment build time
   env: any; //deployment environtment
@@ -549,7 +535,7 @@ interface InstanceDeployment {
   instanceConfiguration: {
     image: string; //docker image
     tag: string; //docker image tag
-    instanceCount: number; //number of instances
+    scale: number; //number of instances
     ports: Array<Port>; //port mappings
     env: Array<EnvironmentVar>; //environment variables
     commands: Array<string>; //list of executables for docker CMD command 
@@ -585,7 +571,7 @@ interface EnvironmentVar {
 };
 
 interface MachineImageType {
-    machineType: string; //compute machine type
+    machineName: string; //compute machine name
     agreementDate: number; //date of deploying instance
     cpu?: number; //compute machine cpu
     memory?: string; //compute machine memory
@@ -666,7 +652,7 @@ interface MarketplaceInstanceResponse {
   marketplaceAppId: string; //marketplace app id
   clusterId: string; //id of a cluster instance belongs to
   instanceId: string; //instance id
-  instanceDeploymentId: string; //deploymentId
+  instanceDeploymentId: string; //deployment id
 }
 ```
 
@@ -889,19 +875,9 @@ Method returns `MarketplaceApp` object.
 interface MarketplaceApp {
   id: string; //id of a marketplace app
   name: string; //name of a marketplace app
-  metadata: {
-    description: string; //description of a marketplace app
-    category: MarketplaceCategoryEnum; //marketplace app category
-  };
-  serviceData: {
-    dockerImage: string; //docker image used for marketplace app
-    dockerImageTag: string; //docker image tag
-    provider: string; //provider of docker image (currently only dockerhub is supported)
-    variables: MarketplaceAppVariable[]; //list of enironemt variables
-    ports: MarketplaceAppPort[]; //list of port mappings
-    commands: string[]; //list of executables for docker CMD command 
-    args: string[]; //list of params for docker CMD command 
-  };
+  description: string; //description of a marketplace app
+  category: MarketplaceCategoryEnum; //marketplace app category
+  variables: MarketplaceAppVariable[]; //list of enironemt variables
 };
 
 enum MarketplaceCategoryEnum {
