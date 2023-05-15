@@ -26,17 +26,17 @@ yarn add @spheron/compute
 
 ## Usage
 
-To use the Spheron Compute SDK, you have to create an instance of `SpheronComputeClient`.
+To use the Spheron Compute SDK, you have to create an instance of `SpheronClient`.
 
 ```js
-import { SpheronComputeClient, ProtocolEnum } from "@spheron/compute";
+import { SpheronClient, ProtocolEnum } from "@spheron/compute";
 
-const client = new SpheronComputeClient({ token });
+const client = new SpheronClient({ token });
 ```
 
-The `SpheronComputeClient` constructor takes an object that has one property `token`.
+The `SpheronClient` constructor takes an object that has one property `token`.
 Follow the instructions in the [DOCS](https://docs.spheron.network/rest-api/#creating-an-access-token) to generate this token.
-The `SpheronComputeClient` has three properties:
+The `SpheronClient` has three properties:
 
 - `organization` provides methods for working with organizations.
 - `cluster` provides methods for working with cluster.
@@ -52,7 +52,7 @@ The `SpheronComputeClient` has three properties:
 
 ## Organization
 
-The methods for working with organizations are available on the `organization` property of the `SpheronComputeClient` object.
+The methods for working with organizations are available on the `organization` property of the `SpheronClient` object.
 
 ### get
 
@@ -146,6 +146,8 @@ interface UsageWithLimits {
 
 ## Cluster
 
+The methods for working with clusters are available on the `cluster` property of the `SpheronClient` object.
+
 ### get
 
 Used to get the cluster based on the passed Id.
@@ -162,13 +164,13 @@ Returns an object of type `Cluster`.
 
 ```js
 interface Cluster {
-  id: string;
-  name: string;
-  url: string;
-  proivder: ProviderEnum;
-  createdBy: string;
-  state: ClusterStateEnum;
-  createdAt: Date;
+  id: string; //id of a cluster
+  name: string; //name of a cluster
+  url: string; //docker image 
+  proivder: ProviderEnum; //docker image provider (currently only dockerhub is supported)
+  createdBy: string; //user that created cluster
+  state: ClusterStateEnum; //state of a cluster
+  createdAt: Date; 
   updatedAt: Date;
 };
 
@@ -212,11 +214,11 @@ Returns an object of type `InstancesInfo`.
 
 ```js
 interface InstancesInfo {
-    active: number;
-    starting: number;
-    failedToStart: number;
-    closed: number;
-    total: number;
+    active: number; //number of active instances in cluster
+    starting: number; //number of starting instances in cluster
+    failedToStart: number; //number of fail to start instances in cluster
+    closed: number; //number of closed instances in cluster
+    total: number; //total number of instances in cluster
 }
 ```
 
@@ -238,8 +240,8 @@ Returns an object of type `ClusterFundsUsage`.
 
 ```js
 interface ClusterFundsUsage {
-    dailyUsage: number;
-    usedTillNow: number;
+    dailyUsage: number; //cluster daily usage in uakt
+    usedTillNow: number; //cluster daily usage in uakt
 }
 ```
 
@@ -271,29 +273,28 @@ Returns an array of `InstanceDetailed` objects. Checkout the [get instance secti
 
 ```js
 interface InstanceDetailed {
-  id: string;
-  state: InstanceStateEnum;
-  name: string;
-  deployments: Array<string>;
-  cluster: string;
-  activeDeployment: string;
-  latestUrlPreview: string;
-  agreedMachineImageType: MachineImageType;
-  retrievableAkt: number;
-  withdrawnAkt: number;
-  healthCheck: HealthCheck;
-  cpu: number;
-  memory: string;
-  storage: string;
-  ami: string;
-  image: string;
-  tag: string;
+  id: string; //id of a istance
+  state: InstanceStateEnum; //state of a instance
+  name: string; //name of a instance
+  deployments: Array<string>; //list of all instance deployment ids
+  cluster: string; //instance cluster id
+  activeDeployment: string; //id of active deployment
+  latestUrlPreview: string; //latest instance url
+  agreedMachineImageType: MachineImageType; //compute machine information
+  healthCheck: HealthCheck; //instance health check endpoint information
+  cpu: number; //compute machine cpu
+  memory: string; //compute machine memory
+  storage: string; //compute machine storage
+  image: string; //docker image
+  tag: string; //docker tag
   createdAt: Date;
   updatedAt: Date;
 }
 ```
 
 ## Instance
+
+The methods for working with instances are available on the `instance` property of the `SpheronClient` object.
 
 ---
 
@@ -315,16 +316,16 @@ const instanceResponse: InstanceResponse =
     region: "any",
     machineImageName: "Ventus Small"
   },
-  topicId: topicId,
   clusterName: "hello world",
-  healthCheckPath: "/",
-  healthCheckPort: 8000,
+  healthCheckConfig: {
+    path: "/",
+    port: 8000
+  }
 });
 ```
 
 Params:
 
-- `topicId`: topic to witch instance logs and events should be sent. Should be set to sessionId from SSE event stream.
 - `clusterName`: name of cluster
 - `healthCheckPath`: health check path
 - `healthCheckPort`: container port on which health check should be done
@@ -334,8 +335,8 @@ Params:
   - `instanceCount`: number of instances that should be created.
   - `ports`: list of port mappings.
   - `env`: list of environment variables.
-  - `commands`: list of commands that should be executed on start.
-  - `args`: list of arguments.
+  - `commands`: list of executables for docker CMD command
+  - `args`: list of params for docker CMD command 
   - `region`: region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
   - `machineImageName`: name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
 
@@ -358,10 +359,9 @@ Returns `InstanceResponse` object, indicating instance deployment has started.
 
 ```js
 interface InstanceResponse {
-  clusterId: string;
-  instanceId: string;
-  instanceDeploymentId: string;
-  topicId: string;
+  clusterId: string; //id of cluster instance is deployed in
+  instanceId: string;  //id of instance
+  instanceDeploymentId: string;  //id of instance deployment
 }
 ```
 
@@ -383,25 +383,23 @@ Returns object of a type `Instance`.
 
 ```js
 interface Instance {
-  id: string;
-  state: InstanceStateEnum;
-  name: string;
-  deployments: Array<string>;
-  cluster: string;
-  activeDeployment: string; 
-  latestUrlPreview: string;
-  agreedMachineImageType: MachineImageType;
-  retrievableAkt: number;
-  withdrawnAkt: number;
-  healthCheck: HealthCheck;
+  id: string; //id of a istance
+  state: InstanceStateEnum; //state of a instance
+  name: string; //name of a instance
+  deployments: Array<string>; //list of all instance deployment ids
+  cluster: string; //instance cluster id
+  activeDeployment: string; //id of active deployment
+  latestUrlPreview: string; //latest instance url
+  agreedMachineImageType: MachineImageType; //compute machine information
+  healthCheck: HealthCheck; //instance health check endpoint information
   createdAt: Date;
   updatedAt: Date;
 };
 
 interface MachineImageType {
-    machineType: string;
-    agreementDate: number;
-};
+    machineType: string; //compute machine type
+    agreementDate: number; //date of deploying instance
+}
 
 enum InstanceStateEnum {
     STARTING = "Starting",
@@ -411,10 +409,10 @@ enum InstanceStateEnum {
 };
 
 interface HealthCheck {
-    url: string;
-    port: Port;
-    status: HealthStatusEnum;
-    timestamp: Date;
+    path: string; //healthcheck path
+    port: Port; //cotainer port on which healthcheck should be done
+    status: HealthStatusEnum; //latest health check status
+    timestamp: Date; //timestamp of last health check
 };
 
 ```
@@ -442,9 +440,8 @@ await spheron.instance.update(
   instanceId,
   {
     env: [{ key: "key", value: "value", isSecret: false }],
-    commands: ["command"],
-    args: ["argument"],
-    topicId: topicId,
+    commands: ["executable"],
+    args: ["param"],
     tag: "latest";
   }
 );
@@ -452,19 +449,17 @@ await spheron.instance.update(
 
 Params:
 - `env`: list of environment variables.
-- `commands`: list of commands that should be executed on start.
-- `args`: list of arguments.
-- `topicId`: topic to witch instance logs and events should be sent
+- `commands`: list of executables for docker CMD command 
+- `args`: list of params for docker CMD command 
 - `tag`: tag for docker image.
 
 Returns `InstanceResponse` object, indicating instance update has started.
 
 ```js
 interface InstanceResponse {
-  clusterId: string;
-  instanceId: string;
-  instanceDeploymentId: string;
-  topicId: string;
+  clusterId: string; //id of cluster instance is deployed in
+  instanceId: string;  //id of instance
+  instanceDeploymentId: string;  //id of instance deployment
 }
 ```
 
@@ -491,8 +486,8 @@ Returns the response indicating if update was successful.
 
 ```js
 { 
-  message: string; 
-  updated: boolean 
+  message: string; //update message
+  updated: boolean; //is updated
 }
 ```
 
@@ -514,8 +509,8 @@ Returns the response indicating if update was successful.
 
 ```js
 { 
-  message: string; 
-  success: boolean 
+  message: string; //close message
+  success: boolean; //is successful
 }
 ```
 
@@ -538,38 +533,36 @@ Returns an `InstanceDeployment` object and list of live logs.
 
 ```js
 interface InstanceDeployment {
-  id: string;
-  type: string;
-  commitId: string;
-  status: DeploymentStatusEnum;
-  buildTime: number;
-  env: any;
-  logs: [{ time: string; log: Array<string> }];
-  closingLogs: [{ time: string; log: string }];
-  clusterLogs: Array<string>;
-  clusterEvents: Array<string>;
-  instance: string;
-  urlPrewiew: string;
-  deploymentInitiator: string;
+  id: string; //id of deployment
+  type: DeploymentTypeEnum; //type of deployment
+  commitId: string; //id of commit
+  status: DeploymentStatusEnum; //status of deployment
+  buildTime: number; //deployment build time
+  env: any; //deployment environtment
+  logs: [{ time: string; log: Array<string> }]; //list of deployment logs
+  closingLogs: [{ time: string; log: string }]; //list of deployment closing logs
+  clusterLogs: Array<string>; //list of cluster logs
+  clusterEvents: Array<string>; //list of cluster events
+  instance: string; //id of instance
+  urlPrewiew: string; //connection url
+  deploymentInitiator: string; //userId that initiated deployment
   instanceConfiguration: {
-    image: string;
-    tag: string;
-    instanceCount: number;
-    ports: Array<Port>;
-    env: Array<EnvironmentVar>;
-    commands: Array<string>;
-    args: Array<string>;
-    region: string;
-    agreedMachineImage: {
-      machineType: string;
-      agreementDate: number;
-      cpu: number;
-      memory: string;
-      storage: string;
-      persistentStorage?: PersistentStorage;
-    };
+    image: string; //docker image
+    tag: string; //docker image tag
+    instanceCount: number; //number of instances
+    ports: Array<Port>; //port mappings
+    env: Array<EnvironmentVar>; //environment variables
+    commands: Array<string>; //list of executables for docker CMD command 
+    args: Array<string>; //list of params for docker CMD command 
+    region: string; //region to which instance is deployed
+    agreedMachineImage: MachineImageType
   };
 };
+
+enum DeploymentTypeEnum {
+  DEPLOY = "DEPLOY",
+  UPDATE = "UPDATE",
+}
 
 enum DeploymentStatusEnum {
   QUEUED = "Queued",
@@ -581,15 +574,24 @@ enum DeploymentStatusEnum {
 };
 
 interface Port {
-    containerPort: number;
-    exposedPort: number;
+    containerPort: number; //container port
+    exposedPort: number; //eposed port container port is mapped to
 };
 
 interface EnvironmentVar {
-  key: string;
-  value: string;
-  isSecret: boolean;
+  key: string; //environment variable key 
+  value: string; //environment variable value 
+  isSecret: boolean; //is environment variable secret 
 };
+
+interface MachineImageType {
+    machineType: string; //compute machine type
+    agreementDate: number; //date of deploying instance
+    cpu?: number; //compute machine cpu
+    memory?: string; //compute machine memory
+    storage?: string; //compute machine storage
+    persistentStorage?: PersistentStorage; //persistent storege information
+}
 
 interface PersistentStorage {
     size: string;
@@ -643,7 +645,6 @@ const instanceCreate: MarketplaceInstanceResponse =
         {label: "Database", value: "mydb" }
       ];
       machineImageId: machineId;
-      topicId: topicId;
       region: "any";
     }
   );
@@ -655,19 +656,17 @@ Params:
   - `marketplaceAppId`: Id of marketplace app. List of available apps can be aquierd from [get section under compute marketplace section](/sdk/compute/#get-3)
   - `environmentVariables`: list of variables for specified marketplace app
   - `machineImageId`: name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
-  - `topicId`: topic to witch instance logs and events should be sent. Should be set to sessionId from SSE event stream
   - `region`: region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
 
 Returns `MarketplaceInstanceResponse` object, indicating instance deployment has started.
 
 ```js
 interface MarketplaceInstanceResponse {
-  marketplaceApp: MarketplaceApp;
-  marketplaceAppId: string;
-  clusterId: string;
-  instanceId: string;
-  instanceDeploymentId: string;
-  topicId: string;
+  marketplaceApp: MarketplaceApp; //marketplace app used
+  marketplaceAppId: string; //marketplace app id
+  clusterId: string; //id of a cluster instance belongs to
+  instanceId: string; //instance id
+  instanceDeploymentId: string; //deploymentId
 }
 ```
 
@@ -689,13 +688,13 @@ Returns an array of deployment domains.
 
 ```js
 interface Domain {
-  id: string;
-  name: string;
-  verified: boolean;
-  link: string;
-  type: DomainTypeEnum;
-  projectId: string;
-  deploymentEnvironmentIds: string[];
+  id: string; // the id of the domain
+  name: string; // the domain name
+  verified: boolean; // true means that the domain is verified and that it will start serving the content
+  link: string; // the link to which the domain points to
+  type: DomainTypeEnum; // the type of the domain
+  projectId: string; // the project id of which the domain is
+  deploymentEnvironmentIds: string[]; //  the ids of the deployment environments for the domain. Whenever a deployment for the specified environment is done, the domain will be updated to point to the new link of the deployment.
 };
 
 enum DomainTypeEnum {
@@ -819,22 +818,17 @@ Method return type is void.
 Used to trigger fetch of latest logs for instance.
 
 ```js
-await spheron.instance.triggerLatestLog(
-  instanceId,
-  topicId
-);
+await spheron.instance.triggerLatestLog(instanceId);
 ```
 
 Params:
 
 - Id of the instance.
-- topic to witch log event will be sent. Log event indicates latest logs have been fetched successfully. Should be set to sessionId from SSE event stream
 
 Returns the response indicating the fetching process has started.
 
 ```js
 {
-  topicId: string;
   message: string;
 }
 ```
@@ -845,28 +839,25 @@ Returns the response indicating the fetching process has started.
 Used to trigger fetch of latest helth status for instance.
 
 ```js
-await spheron.instance.triggerLatestHealth(
-  instanceId,
-  topicId
-);
+await spheron.instance.triggerLatestHealth(instanceId);
 ```
 
 Params:
 
 - Id of the instance.
-- topic to witch health check event will be sent. Health check event indicates latest logs have been fetched successfully. Should be set to sessionId from SSE event stream.
 
 Returns the response indicating the fetching process has started.
 
 ```js
 {
-  topicId: string;
   message: string;
 }
 ```
 ---
 
 ## Compute Marketplace
+
+The methods for working with marketplace apps are available on the `computeMarketplace` property of the `SpheronClient` object.
 
 ### getAll
 
@@ -896,24 +887,20 @@ Method returns `MarketplaceApp` object.
 
 ```js
 interface MarketplaceApp {
-  id: string;
-  name: string;
+  id: string; //id of a marketplace app
+  name: string; //name of a marketplace app
   metadata: {
-    description: string;
-    icon: string;
-    image: string;
-    docsLink: string;
-    websiteLink: string;
-    category: MarketplaceCategoryEnum;
+    description: string; //description of a marketplace app
+    category: MarketplaceCategoryEnum; //marketplace app category
   };
   serviceData: {
-    dockerImage: string;
-    dockerImageTag: string;
-    provider: string;
-    variables: MarketplaceAppVariable[];
-    ports: MarketplaceAppPort[];
-    commands: string[];
-    args: string[];
+    dockerImage: string; //docker image used for marketplace app
+    dockerImageTag: string; //docker image tag
+    provider: string; //provider of docker image (currently only dockerhub is supported)
+    variables: MarketplaceAppVariable[]; //list of enironemt variables
+    ports: MarketplaceAppPort[]; //list of port mappings
+    commands: string[]; //list of executables for docker CMD command 
+    args: string[]; //list of params for docker CMD command 
   };
 };
 
@@ -952,6 +939,8 @@ Method returns list of available categories.
 
 ## Compute Machine
 
+The methods for working with compute machines are available on the `computeMachine` property of the `SpheronClient` object.
+
 ### get
 
 Used to get list of available compute machines.
@@ -975,11 +964,11 @@ Method returnns list of `ComputeMachine` objects.
 
 ```js
 interface ComputeMachine {
-  id: string;
-  name: string;
-  cpu: number;
-  storage: string;
-  memory: string;
+  id: string; //id of compute machine
+  name: string; //name of compute machine
+  cpu: number; //compute machine cpu
+  storage: string; //compute machine storage
+  memory: string; //compute machine memeory
 }
 ```
 
