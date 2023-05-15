@@ -305,7 +305,8 @@ Used for deploying new instance.
 ```js
 const instanceResponse: InstanceResponse =
   await spheron.instance.create(creationConfig: {
-   configuration: {
+  clusterName: "hello world",
+  configuration: {
     image: "crccheck/hello-world",
     tag: "latest",
     instanceCount: 1,
@@ -316,7 +317,6 @@ const instanceResponse: InstanceResponse =
     region: "any",
     machineImageName: "Ventus Small"
   },
-  clusterName: "hello world",
   healthCheckConfig: {
     path: "/",
     port: 8000
