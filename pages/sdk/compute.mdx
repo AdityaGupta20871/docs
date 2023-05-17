@@ -88,7 +88,7 @@ interface Organization {
 Used to get the clusters of the organization. The method supports pagination.
 
 ```js
-const clusters: Cluster[] = await spheron.organizations.getClusters(options: {
+const clusters: Cluster[] = await spheron.organizations.getClusters({
   skip: 0,
   limit: 10
 });
@@ -97,8 +97,8 @@ const clusters: Cluster[] = await spheron.organizations.getClusters(options: {
 Params:
 
 - `options`:
-  - `skip`: number of clusters to skip.
-  - `limit`: number of clusters to take.
+  - `skip`: (number) - number of clusters to skip.
+  - `limit`: (number) - number of clusters to take.
 
 Return an array of clusters. Checkout the [get cluster section for more details on the cluster interface properties](/sdk/compute/#get-1).
 
@@ -114,7 +114,7 @@ Returns the `UsageWithLimits` object.
 
 ```js
 interface UsageWithLimits {
-    used: {
+  used: {
     computeCredit?: number; // the amount used by organization, in usd
     computeBuildExecution?: number; // the time used for builds, in seconds
     numberOfRequests?: number; //the number of requests organization has had until now
@@ -160,7 +160,7 @@ interface Cluster {
 };
 
 enum ProviderEnum {
-    DOCKERHUB = "DOCKERHUB"
+    DOCKERHUB
 };
 
 ```
@@ -188,16 +188,16 @@ Method return type is void. If there is an issue while archiving, an error will 
 Used for getting information about instances in cluster.
 
 ```js
-await spheron.cluster.getInstancesInfo(clusterId);
+const instanceInfo: InstancesInfo = await spheron.cluster.getInstancesInfo(clusterId);
 ```
 
 Returns an object of type `InstancesInfo`.
 
 ```js
 interface InstancesInfo {
-    active: number; //number of active instances in cluster
-    starting: number; //number of starting instances in cluster
-    failedToStart: number; //number of fail to start instances in cluster
+    provisioned: number; //number of active instances in cluster
+    provisioning: number; //number of starting instances in cluster
+    failedToProvision: number; //number of fail to start instances in cluster
     closed: number; //number of closed instances in cluster
     total: number; //total number of instances in cluster
 }
@@ -247,8 +247,8 @@ Params:
 
 - Id of the cluster.
 - `options`:
-  - `skip`: number of instances to skip.
-  - `limit`: number of instances to take.
+  - `skip`: (number) - number of instances to skip.
+  - `limit`: (number) - number of instances to take.
 
 Returns an array of `InstanceDetailed` objects. Checkout the [get instance section for more details on the instance interface properties](/sdk/compute/#get-2)
 
@@ -260,7 +260,6 @@ interface InstanceDetailed {
   deployments: Array<string>; //list of all instance deployment ids
   cluster: string; //instance cluster id
   activeDeployment: string; //id of active deployment
-  latestUrlPreview: string; //latest instance url
   agreedMachine: MachineImageType; //compute machine information
   healthCheck: HealthCheck; //instance health check endpoint information
   cpu: number; //compute machine cpu
@@ -292,11 +291,11 @@ const instanceResponse: InstanceResponse =
     tag: "latest",
     scale: 1,
     ports: [{ containerPort: 8000, exposedPort: 8000 }],
-    env: [],
+    environmentVariables: [],
     commands: [],
     args: [],
     region: "any",
-    machineImageName: "Ventus Small"
+    machineImageId: ventusSmallId
   },
   healthCheckConfig: {
     path: "/",
@@ -307,24 +306,24 @@ const instanceResponse: InstanceResponse =
 
 Params:
 
-- `clusterName`: name of cluster
+- `clusterName`: (string) - name of cluster
 - `configuration`: the name of the variable.
-  - `image`: dockerhub image url (should be publicly available).
-  - `tag`: tag for docker image.
-  - `scale`: number of instances that should be created.
-  - `ports`: list of port mappings.
-  - `env`: list of environment variables.
-  - `commands`: list of executables for docker CMD command
-  - `args`: list of params for docker CMD command 
-  - `region`: region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
-  - `machineImageName`: name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
+  - `image`: (string) - dockerhub image url (should be publicly available).
+  - `tag`: (string) - tag for docker image.
+  - `scale`: (number) - number of instances that should be created.
+  - `ports`: (Port[]) - list of port mappings.
+  - `environmentVariables`: (EnvironmentVariable[]) -  list of environment variables.
+  - `commands`: (string[]) - list of executables for docker CMD command
+  - `args`: (string[]) - list of params for docker CMD command 
+  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
+  - `machineImageId`: (string) - id of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
   - `healthCheckConfig`:
-    - `path`: path on which health check should be done
-    - `port`: container port on which health check should be done
+    - `path`: (string) - path on which health check should be done
+    - `port`: (number) - container port on which health check should be done
 
 - `Port`: 
-  - `containerPort`: container port that will be mapped
-  - `exposedPort`: port to be mapped to
+  - `containerPort`: (number) - container port that will be mapped
+  - `exposedPort`: (number) - port to be mapped to
 
 <Callout type="info">
   **NOTE:** At the moment, only mapping to port 80 can be guarantied. For all the others, container port will be mapped to random port asigned on instance deployment.
@@ -332,12 +331,12 @@ Params:
   - \{ containerPort: 3000, exposedPort: 3000 \} - port 3000 will be mapped to randpom port
 </Callout>
 
-- `EnvironmentVar`: 
-  - `key`: key of environment variable
-  - `value`: value of environment variable
-  - `isSecret`: should environment variable be secret
+- `EnvironmentVariable`: 
+  - `key`: (string) - key of environment variable
+  - `value`: (string) - value of environment variable
+  - `isSecret`: (string) - should environment variable be secret
 
-Returns `InstanceResponse` object, indicating instance deployment has started.
+Returns `InstanceResponse` object, indicating instance deployment has started. If there is an issue while deploying, an error will be thrown.
 
 ```js
 interface InstanceResponse {
@@ -371,7 +370,6 @@ interface Instance {
   deployments: Array<string>; //list of all instance deployment ids
   cluster: string; //instance cluster id
   activeDeployment: string; //id of active deployment
-  latestUrlPreview: string; //latest instance url
   agreedMachine: MachineImageType; //compute machine information
   healthCheck: HealthCheck; //instance health check endpoint information
   createdAt: Date;
@@ -384,10 +382,10 @@ interface MachineImageType {
 }
 
 enum InstanceStateEnum {
-    STARTING = "Starting",
-    FAILED_START = "Failed-start",
-    ACTIVE = "Active",
-    CLOSED = "Closed"
+    STARTING,
+    FAILED_START,
+    ACTIVE,
+    CLOSED
 };
 
 interface HealthCheck {
@@ -396,6 +394,12 @@ interface HealthCheck {
     status: HealthStatusEnum; //latest health check status
     timestamp: Date; //timestamp of last health check
 };
+
+enum HealthStatusEnum {
+    ACTIVE,
+    INACTIVE,
+    UNKNOWN
+}
 
 ```
 
@@ -421,7 +425,7 @@ Used to update instance.
 await spheron.instance.update(
   instanceId,
   {
-    env: [{ key: "key", value: "value", isSecret: false }],
+    environmentVariables: [{ key: "key", value: "value", isSecret: false }],
     commands: ["executable"],
     args: ["param"],
     tag: "latest";
@@ -430,10 +434,10 @@ await spheron.instance.update(
 ```
 
 Params:
-- `env`: list of environment variables.
-- `commands`: list of executables for docker CMD command 
-- `args`: list of params for docker CMD command 
-- `tag`: tag for docker image.
+- `environmentVariables`: (EnvironmentVariable[]) - list of environment variables.
+- `commands`:  (string[]) - list of executables for docker CMD command 
+- `args`:  (string[]) - list of params for docker CMD command 
+- `tag`:  (string[]) - tag for docker image.
 
 Returns `InstanceResponse` object, indicating instance update has started.
 
@@ -458,11 +462,11 @@ const updated = await spheron.instance.updateHealthCheck(
 
 Params:
 
-- Id of the project.
+- Id of the instance.
 - Id of the environment variable.
 - `healthCheck`:
-  - `path`: health check path
-  - `cointainerPort`: container port on which health check should be done
+  - `path`:  (string) -health check path
+  - `cointainerPort`: (number) - container port on which health check should be done
 
 Returns the response indicating if update was successful.
 
@@ -519,20 +523,15 @@ interface InstanceDeployment {
   type: DeploymentTypeEnum; //type of deployment
   status: DeploymentStatusEnum; //status of deployment
   buildTime: number; //deployment build time
-  env: any; //deployment environtment
-  logs: [{ time: string; log: Array<string> }]; //list of deployment logs
-  closingLogs: [{ time: string; log: string }]; //list of deployment closing logs
-  clusterLogs: Array<string>; //list of cluster logs
-  clusterEvents: Array<string>; //list of cluster events
   instance: string; //id of instance
-  urlPrewiew: string; //connection url
+  connectionUrls: string; //list of connection url for the instance
   deploymentInitiator: string; //userId that initiated deployment
   instanceConfiguration: {
     image: string; //docker image
     tag: string; //docker image tag
     scale: number; //number of instances
     ports: Array<Port>; //port mappings
-    env: Array<EnvironmentVar>; //environment variables
+    environmentVariables: Array<EnvironmentVar>; //environment variables
     commands: Array<string>; //list of executables for docker CMD command 
     args: Array<string>; //list of params for docker CMD command 
     region: string; //region to which instance is deployed
@@ -541,17 +540,17 @@ interface InstanceDeployment {
 };
 
 enum DeploymentTypeEnum {
-  DEPLOY = "DEPLOY",
-  UPDATE = "UPDATE",
+  DEPLOY,
+  UPDATE,
 }
 
 enum DeploymentStatusEnum {
-  QUEUED = "Queued",
-  PENDING = "Pending",
-  DEPLOYED = "Deployed",
-  FAILED = "Failed",
-  DEPRECATED = "Deprecated",
-  DEPRECATED_PROVIDER = "Deprecated-Provider",
+  QUEUED,
+  PENDING,
+  DEPLOYED,
+  FAILED,
+  DEPRECATED,
+  DEPRECATED_PROVIDER,
 };
 
 interface Port {
@@ -559,7 +558,7 @@ interface Port {
     exposedPort: number; //eposed port container port is mapped to
 };
 
-interface EnvironmentVar {
+interface EnvironmentVariable {
   key: string; //environment variable key 
   value: string; //environment variable value 
   isSecret: boolean; //is environment variable secret 
@@ -579,6 +578,12 @@ interface PersistentStorage {
     class: PersistentStorageClassEnum;
     mountPoint: string;
 };
+
+enum PersistentStorageClassEnum {
+    BETA1,
+    BETA2,
+    BETA3
+}
 ```
 
 ---
@@ -588,7 +593,7 @@ interface PersistentStorage {
 Used to fetch InstanceDeployment with specified logs
 
 ```js
-const instanceDeployment: InstanceDeployment = await spheron.instance.getInstanceDeploymentLogs(
+const instanceLogs: Array<string> = await spheron.instance.getInstanceDeploymentLogs(
     deploymentId,
     {
       from: 0;
@@ -602,13 +607,20 @@ Params:
 
 - Id of the deployment.
 - `logsOptions`:
-  - `from`: from log 
-  - `to`: to log
-  - `logType`: log type to fetch (deployment logs/instance logs/instance events).
-  - `search`: search string (optional)
+  - `from`: (number) - from which line you want to fetch the first log
+  - `to`: (number) - till which line you want to fetch the logs
+  - `logType`: (InstanceLogType) - log type to fetch (deployment logs/instance logs/instance events).
+  - `search`: (string) - search string (optional)
 
-Returns an `InstanceDeployment` object with filtered logs. For more details about InstanceDeployment object check [getInstanceDeployment section](/sdk/compute/#getInstanceDeployment-1)
+```js
+  enum InstanceLogType {
+    DEPLOYMENT_LOGS, //the logs of instance deployment process
+    INSTANCE_LOGS, //the logs of container running on instance
+    INSTANCE_EVENTS //the logs of instance events
+}
+```
 
+Returns an list of for instance deployment.
 ---
 
 ### createFromMarketplace
@@ -621,9 +633,9 @@ const instanceCreate: MarketplaceInstanceResponse =
     {
       marketplaceAppId: marketplaceAppId;
       environmentVariables: [
-        {label: "User", value: "admin"},
-        {label: "Password", value: "super secret password"},
-        {label: "Database", value: "mydb" }
+        {key: "User", value: "admin"},
+        {key: "Password", value: "super secret password"},
+        {key: "Database", value: "mydb" }
       ];
       machineImageId: machineId;
       region: "any";
@@ -634,20 +646,20 @@ const instanceCreate: MarketplaceInstanceResponse =
 Params:
 
 - `createConfig`:
-  - `marketplaceAppId`: Id of marketplace app. List of available apps can be aquierd from [get section under compute marketplace section](/sdk/compute/#get-3)
-  - `environmentVariables`: list of variables for specified marketplace app
-  - `machineImageId`: name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
-  - `region`: region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
+  - `marketplaceAppId`: (string) - Id of marketplace app. List of available apps can be aquierd from [get section under compute marketplace section](/sdk/compute/#get-3)
+  - `environmentVariables`: (EnvironmentVariable[]) - list of variables for specified marketplace app. List of available environemt variables can be found in [MarketplaceApp object](/sdk/compute/#get-3)
+  - `machineImageId`: (string) - name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
+  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
 
-Returns `MarketplaceInstanceResponse` object, indicating instance deployment has started.
+Returns `MarketplaceInstanceResponse` object, indicating instance deployment has started. If there is an issue while deploying, an error will be thrown.
 
 ```js
 interface MarketplaceInstanceResponse {
-  marketplaceApp: MarketplaceApp; //marketplace app used
-  marketplaceAppId: string; //marketplace app id
-  clusterId: string; //id of a cluster instance belongs to
-  instanceId: string; //instance id
-  instanceDeploymentId: string; //deployment id
+  marketplaceApp: MarketplaceApp; //marketplace app used 
+  marketplaceAppId: string; //the id of the marketplace app
+  clusterId: string; //the id of the cluster instance belongs to
+  instanceId: string; //the id of the instance
+  instanceDeploymentId: string; //the id of the instance deployment
 }
 ```
 
@@ -658,12 +670,12 @@ interface MarketplaceInstanceResponse {
 Used to get the domains of a project.
 
 ```js
-const domains: Domain[] = await spheron.instance.getDomains(projectId);
+const domains: Domain[] = await spheron.instance.getDomains(instanceId);
 ```
 
 Params:
 
-- Id of the project.
+- Id of the instance.
 
 Returns an array of deployment domains.
 
@@ -674,61 +686,38 @@ interface Domain {
   verified: boolean; // true means that the domain is verified and that it will start serving the content
   link: string; // the link to which the domain points to
   type: DomainTypeEnum; // the type of the domain
-  projectId: string; // the project id of which the domain is
-  deploymentEnvironmentIds: string[]; //  the ids of the deployment environments for the domain. Whenever a deployment for the specified environment is done, the domain will be updated to point to the new link of the deployment.
+  instanceId: string; // the instance id of which the domain is
 };
 
 enum DomainTypeEnum {
-    DOMAIN = "domain",
-    SUBDOMAIN = "subdomain",
-    HANDSHAKE_DOMAIN = "handshake-domain",
-    HANDSHAKE_SUBDOMAIN = "handshake-subdomain",
-    ENS_DOMAIN = "ens-domain"
+    DOMAIN,
+    SUBDOMAIN,
+    HANDSHAKE_DOMAIN,
+    HANDSHAKE_SUBDOMAIN,
+    ENS_DOMAIN
 }
 ```
-
-### getDomain
-
-Used to get the domain of a project.
-
-```js
-const domain: Domain = await spheron.instance.getDomain(projectId, "test.com");
-```
-
-Params:
-
-- Id of the project.
-- Domain identifier. The domain identifier can be the domain id, or the domain name itself.
-
-Returns the domain.
-
----
 
 ### addDomain
 
 Used to add a new domain to a project.
 
 ```js
-const domain: Domain = await spheron.instance.addDomain(projectId, {
+const domain: Domain = await spheron.instance.addDomain(instanceId, {
   name: "domain.com",
   type: DomainTypeEnum.DOMAIN,
-  deploymentEnvironments: ["Production"],
+  link: connectionUrl
 });
 ```
 
 Params:
 
-- Id of the project.
+- Id of the instance.
 - `options`:
-  - `name`: the domain name.
-  - `type`: the domain type.
-  - `deploymentEnvironments` ( optional ): name of the deployment environments. Whenever a deployment for the specified deployment environment executed, the domain will be updated to point to the newly deployed data.
-  - `link` ( optional ): The `sitePreview` of a specific deployment of the same project. When this property is set, the domain will point to data of the specified deployment, and will not be updated when a new deployment is done.
+  - `name`: (string) - the domain name.
+  - `type`: (DomainTypeEnum) - the domain type.
+  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which domain will point to
 
-<Callout type="info">
-  **NOTE:** Ether `deploymentEnvironments` or `link` is required in the request
-  body.
-</Callout>
 
 Returns the newly created domain. After a domain is created you need to call the [verifyDomain](/sdk/compute/#verifydomain) function for it to work.
 
@@ -740,11 +729,12 @@ Used to update a domain of a project.
 
 ```js
 const domain: Domain = await spheron.instance.updateDomain(
-  projectId,
+  instanceId,
   domainId,
   {
     name: "test.com",
-    deploymentEnvironments: ["Production"],
+    type: DomainTypeEnum.DOMAIN,
+    link: connectionUrl,
   }
 );
 ```
@@ -753,10 +743,10 @@ Params:
 
 - Id of the project.
 - Domain identifier. The domain identifier can be the domain id, or the domain name itself.
-- `options`:
-  - `name`: the domain name.
-  - `deploymentEnvironments` ( optional ): name of the deployment environments. Whenever a deployment for the specified deployment environment executed, the domain will be updated to point to the newly deployed data.
-  - `link` ( optional ): The `sitePreview` of a specific deployment of the same project. When this property is set, the domain will point to data of the specified deployment, and will not be updated when a new deployment is done.
+- `doamin`:
+  - `name`: (string) - the domain name.
+  - `type`: (DomainTypeEnum) - the domain type.
+  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which domain will point to
 
 Returns the updated domain. If the domain name is updated you need to call the [verifyDomain](/sdk/compute/#verifydomain) function again.
 
@@ -767,12 +757,12 @@ Returns the updated domain. If the domain name is updated you need to call the [
 Used to verify the domain, after which the content behind the domain will be cached on CDN.
 
 ```js
-const domain: Domain = await spheron.instance.verifyDomain(projectId, domainId);
+const domain: Domain = await spheron.instance.verifyDomain(instanceId, domainId);
 ```
 
 Params:
 
-- Id of the project.
+- Id of the instance.
 - Domain identifier. The domain identifier can be the domain id, or the domain name itself.
 
 Returns the verified domain.
@@ -784,12 +774,12 @@ Returns the verified domain.
 Used to delete a domain of a project.
 
 ```js
-await spheron.instance.deleteDomain(projectId, domainId);
+await spheron.instance.deleteDomain(instanceId, domainId);
 ```
 
 Params:
 
-- Id of the project.
+- Id of the instance.
 - Domain identifier. The domain identifier can be the domain id, or the domain name itself.
 
 Method return type is void.
@@ -876,23 +866,16 @@ interface MarketplaceApp {
 };
 
 enum MarketplaceCategoryEnum {
-    DATABASE = "Database",
-    NODE = "Node",
-    TOOLS = "Tools"
+    DATABASE,
+    NODE,
+    TOOLS
 };
 
 interface MarketplaceAppVariable {
-    name: string;
-    defaultValue: string;
-    label: string;
-    required?: string;
-    hidden: boolean;
-};
-
-interface MarketplaceAppPort {
-    containerValue: number;
-    defaultExposedValue: number;
-};
+  defaultValue: string;
+  key: string;
+  required?: string;
+}
 ```
 ---
 
@@ -920,16 +903,16 @@ Used to get list of available compute machines.
 const computeMachines: ComputeMachine[] = await spheron.computeMachine.get({
   skip: 0,
   limit: 10,
-  searchString: "2Gi"
+  search: "2Gi"
 });
 ```
 
 Params:
 
 - `options`:
-  - `skip`: number of machines to skip.
-  - `limit`: number of machines to take.
-  - `searchString`: (optional) search string. Search for specific cpu/storage/memory.
+  - `skip`: (number) - number of machines to skip.
+  - `limit`: (number) - number of machines to take.
+  - `search`: (string) - (optional) search string. Search for specific cpu/storage/memory.
 
 Method returnns list of `ComputeMachine` objects.
 
