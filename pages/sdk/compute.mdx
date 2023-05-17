@@ -155,7 +155,6 @@ interface Cluster {
   url: string; //docker image
   proivder: ProviderEnum; //docker image provider (currently only dockerhub is supported)
   createdBy: string; //id of the user that created cluster
-  state: ClusterStateEnum; //state of a cluster
   createdAt: Date; 
   updatedAt: Date;
 };
@@ -164,10 +163,6 @@ enum ProviderEnum {
     DOCKERHUB = "DOCKERHUB"
 };
 
-enum ClusterStateEnum {
-    MAINTAINED = "MAINTAINED",
-    ARCHIVED = "ARCHIVED"
-};
 ```
 
 ---
