@@ -115,17 +115,17 @@ Returns the `UsageWithLimits` object.
 ```js
 interface UsageWithLimits {
   used: {
-    computeCredit?: number; // the amount used by organization, in usd
-    computeBuildExecution?: number; // the time used for builds, in seconds
-    numberOfRequests?: number; //the number of requests organization has had until now
-    bandwidth?: number; //the bytes of bandwith used for current subscription
-    domains?: number; //the number of domains and subdomains an organization has
+    computeCredit: number; // the amount used by organization, in usd
+    computeBuildExecution: number; // the time used for builds, in seconds
+    numberOfRequests: number; //the number of requests organization has had until now
+    bandwidth: number; //the bytes of bandwith used for current subscription
+    domains: number; //the number of domains and subdomains an organization has
   };
   limit: {
-    computeCredit?: number; // the amount limit for organization, in usd
-    computeBuildExecution?: number; // the time limit for builds, in seconds
-    bandwidth?: number; //the limit of bandwith for subscription
-    domains?: number; //the limit on how many domains and subdomains can an organization have
+    computeCredit: number; // the amount limit for organization, in usd
+    computeBuildExecution: number; // the time limit for builds, in seconds
+    bandwidth: number; //the limit of bandwith for subscription
+    domains: number; //the limit on how many domains and subdomains can an organization have
   };
 }
 ```
