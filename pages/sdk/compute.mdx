@@ -35,8 +35,7 @@ const client = new SpheronClient({ token });
 ```
 
 The `SpheronClient` constructor takes an object that has one property `token`.
-Follow the instructions in the [DOCS](https:// docs.spheron.network/rest-api/#creating-an-access-token) to generate this token. When you are creating the tokens, please choose **Compute** type in
-  the dashboard.
+Follow the instructions in the [DOCS](https://docs.spheron.network/rest-api/#creating-an-access-token) to generate this token. When you are creating the tokens, please choose **Compute** type in the dashboard.
 The `SpheronClient` has five properties:
 
 - `organization` provides methods for working with organization.
@@ -96,6 +95,8 @@ Params:
   - `limit`: (number) - number of clusters to take.
 
 Return an array of clusters. Checkout the [get cluster section for more details on the cluster interface properties](/sdk/compute/#get-1).
+
+---
 
 ### getUsage
 
@@ -245,7 +246,7 @@ Params:
   - `skip`: (number) - number of instances to skip.
   - `limit`: (number) - number of instances to take.
 
-Returns an array of `InstanceDetailed` objects. Checkout the [get instance section for more details on the instance interface properties](/sdk/compute/#get-2)
+Returns an array of `InstanceDetailed` objects. Checkout the [get instance section for more details on the instance interface properties](/sdk/compute/#get-2).
 
 ```js
 interface InstanceDetailed {
@@ -270,8 +271,6 @@ interface InstanceDetailed {
 ## Instance
 
 The methods for working with instances are available on the `instance` property of the `SpheronClient` object.
-
----
 
 ### create
 
@@ -301,36 +300,36 @@ const instanceResponse: InstanceResponse =
 
 Params:
 
-- `clusterName`: (string) - name of cluster
+- `clusterName`: (string) - name of cluster.
 - `configuration`: the name of the variable.
   - `image`: (string) - dockerhub image url (should be publicly available).
   - `tag`: (string) - tag for docker image.
   - `ports`: (Port[]) - list of port mappings.
   - `environmentVariables`: (EnvironmentVariable[]) -  list of environment variables.
   - `secretEnvironmentVariables`: (EnvironmentVariable[]) -  list of secret environment variables.
-  - `commands`: (string[]) - list of executables for docker CMD command
-  - `args`: (string[]) - list of params for docker CMD command 
-  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
-  - `machineImageId`: (string) - id of machine image which should be used for deploying instance. List of available machines can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
+  - `commands`: (string[]) - list of executables for docker CMD command.
+  - `args`: (string[]) - list of params for docker CMD command.
+  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions).
+  - `machineImageId`: (string) - id of machine image which should be used for deploying instance. List of available machines can be aquierd from [get section under compute machine section](/sdk/compute/#get-4).
   - `healthCheckConfig`:
-    - `path`: (string) - path on which health check should be done
-    - `port`: (number) - container port on which health check should be done
+    - `path`: (string) - path on which health check should be done.
+    - `port`: (number) - container port on which health check should be done.
 
 Types:    
 
 - `Port`: 
-  - `containerPort`: (number) - container port that will be mapped
-  - `exposedPort`: (number) - port to be mapped to
+  - `containerPort`: (number) - container port that will be mapped.
+  - `exposedPort`: (number) - port to be mapped to.
 
 <Callout type="info">
   **NOTE:** At the moment, only mapping to port 80 can be guarantied. For all the others, container port will be mapped to random port asigned on instance deployment.
-  - \{ containerPort: 3000, exposedPort: 80 \} - port 3000 will be mapped to port 80
-  - \{ containerPort: 3000, exposedPort: 3000 \} - port 3000 will be mapped to randpom port
+  - \{ containerPort: 3000, exposedPort: 80 \} - port 3000 will be mapped to port 80.
+  - \{ containerPort: 3000, exposedPort: 3000 \} - port 3000 will be mapped to randpom port.
 </Callout>
 
 - `EnvironmentVariable`: 
-  - `key`: (string) - key of environment variable
-  - `value`: (string) - value of environment variable
+  - `key`: (string) - key of environment variable.
+  - `value`: (string) - value of environment variable.
 
 Returns `InstanceResponse` object, indicating instance deployment has started. If there is an issue while deploying, an error will be thrown.
 
@@ -433,8 +432,8 @@ await spheron.instance.update(
 Params:
 - `environmentVariables`: (EnvironmentVariable[]) - list of environment variables.
 - `secretEnvironmentVariables`: (EnvironmentVariable[]) - list of secret environment variables.
-- `commands`:  (string[]) - list of executables for docker CMD command 
-- `args`:  (string[]) - list of params for docker CMD command 
+- `commands`:  (string[]) - list of executables for docker CMD command. 
+- `args`:  (string[]) - list of params for docker CMD command. 
 - `tag`:  (string[]) - tag for docker image.
 
 Returns `InstanceResponse` object, indicating instance update has started.
@@ -446,6 +445,7 @@ interface InstanceResponse {
   instanceDeploymentId: string;  // id of instance deployment
 }
 ```
+---
 
 ### updateHealthCheck
 
@@ -463,8 +463,8 @@ Params:
 - Id of the instance.
 - Id of the environment variable.
 - `healthCheck`:
-  - `path`:  (string) - health check path
-  - `port`: (number) - container port on which health check should be done
+  - `path`:  (string) - health check path.
+  - `port`: (number) - container port on which health check should be done.
 
 Returns the response indicating if update was successful.
 
@@ -588,7 +588,7 @@ enum PersistentStorageClassEnum {
 
 ### getInstanceLogs
 
-Used to fetch InstanceDeployment with specified logs
+Used to fetch InstanceDeployment with specified logs.
 
 ```js
 const instanceLogs: Array<string> = await spheron.instance.getInstanceLogs(
@@ -605,10 +605,10 @@ Params:
 
 - Id of the deployment.
 - `options`:
-  - `from`: (number) - from which line you want to fetch the first log
-  - `to`: (number) - till which line you want to fetch the logs
+  - `from`: (number) - from which line you want to fetch the first log.
+  - `to`: (number) - till which line you want to fetch the logs.
   - `logType`: (InstanceLogType) - log type to fetch (deployment logs/instance logs/instance events).
-  - `search`: (string) - search string (optional)
+  - `search`: (string) - search string (optional).
 
 ```js
   enum InstanceLogType {
@@ -619,6 +619,7 @@ Params:
 ```
 
 Returns an list of for instance deployment logs.
+
 ---
 
 ### createFromMarketplace
@@ -644,10 +645,10 @@ const instanceCreate: MarketplaceInstanceResponse =
 Params:
 
 - `createConfig`:
-  - `marketplaceAppId`: (string) - Id of marketplace app. List of available apps can be aquierd from [get section under compute marketplace section](/sdk/compute/#get-3)
-  - `environmentVariables`: (EnvironmentVariable[]) - list of environment variables for specified marketplace app. List of available environemt variables can be found in [MarketplaceApp object](/sdk/compute/#get-3)
-  - `machineImageId`: (string) - name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4)
-  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions)
+  - `marketplaceAppId`: (string) - Id of marketplace app. List of available apps can be aquierd from [get section under compute marketplace section](/sdk/compute/#get-3).
+  - `environmentVariables`: (EnvironmentVariable[]) - list of environment variables for specified marketplace app. List of available environemt variables can be found in [MarketplaceApp object](/sdk/compute/#get-3).
+  - `machineImageId`: (string) - name of machine image which should be used for deploying instance. List of available can be aquierd from [get section under compute machine section](/sdk/compute/#get-4).
+  - `region`: (string) - region in which to deploy instance. List of available can be acquired from [getRegions section under compute machine section](/sdk/compute/#getregions).
 
 Returns `MarketplaceInstanceResponse` object, indicating instance deployment has started. If there is an issue while deploying, an error will be thrown.
 
@@ -692,6 +693,7 @@ enum DomainTypeEnum {
     SUBDOMAIN
 }
 ```
+---
 
 ### addDomain
 
@@ -711,7 +713,7 @@ Params:
 - `options`:
   - `name`: (string) - the domain name.
   - `type`: (DomainTypeEnum) - the domain type.
-  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which the domain will point to
+  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which the domain will point to.
 
 
 Returns the newly created domain. After a domain is created you need to call the [verifyDomain](/sdk/compute/#verifydomain) function for it to work.
@@ -741,7 +743,7 @@ Params:
 - `doamin`:
   - `name`: (string) - the domain name.
   - `type`: (DomainTypeEnum) - the domain type.
-  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which the domain will point to
+  - `link`: (string) - one of the `connectionUrls` list elements of a active deployment of the instance to which the domain will point to.
 
 Returns the updated domain. If the domain name is updated you need to call the [verifyDomain](/sdk/compute/#verifydomain) function again.
 
@@ -778,6 +780,8 @@ Params:
 - Domain identifier. The domain identifier can be the domain id, or the domain name itself.
 
 Method return type is void.
+
+---
 
 ### triggerLatestLog
 
@@ -819,7 +823,6 @@ Returns the response indicating the fetching process has started.
   message: string; // the response message
 }
 ```
----
 
 ## Compute Marketplace
 
@@ -834,7 +837,9 @@ const marketplaceApps: MarketplaceApp[] =
   await spheron.computeMarketplace.getAll();
 ```
 
-Method returns list of `MarketplaceApp` objects. For more details about `MarketplaceApp`check [get section under compute marketplace](/sdk/compute/#get-4)
+Method returns list of `MarketplaceApp` objects. For more details about `MarketplaceApp`check [get section under compute marketplace](/sdk/compute/#get-4).
+
+---
 
 ### get
 
@@ -884,8 +889,6 @@ const categories: string[] = await spheron.computeMarketplace.getCategories();
 
 Method returns list of available categories.
 
----
-
 ## Compute Machine
 
 The methods for working with compute machines are available on the `computeMachine` property of the `SpheronClient` object.
@@ -921,6 +924,8 @@ interface ComputeMachine {
 }
 ```
 
+---
+
 ### getRegions
 
 Used to get available regions.
@@ -930,3 +935,5 @@ const regions: string[] = await spheron.computeMachine.getRegions();
 ```
 
 Returns list of available regions.
+
+<Navigation name="Compute SDK" />
