@@ -18,7 +18,7 @@ const SDK_LIST = [
     path: "/sdk/compute",
     emoji: "📼",
     title: "Compute SDK",
-    body: "For Node.js based environments",
+    body: "Designed to streamline work with your compute organisations",
   },
 ];
 
