@@ -59,6 +59,7 @@ export const Pages = [
   ["Server Guide", "/server-guide"],
   ["Deploy Django App", "/server-guide/django"],
   ["Deploy Next App", "/server-guide/nextjs"],
+  ["Deploy Go App", "/server-guide/go"],
   ["Spheron API", "/rest-api"],
   ["Spheron SDK", "/sdk"],
   ["Storage SDK", "/sdk/storage"],
