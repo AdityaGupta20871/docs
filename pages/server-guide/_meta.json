@@ -1,6 +1,6 @@
 {
-  "django": "Deploy Django App",
   "nextjs": "Deploy Next App",
   "rust": "Deploy Rust App",
+  "django": "Deploy Django App",
   "go": "Deploy Go App"
 }

@@ -1,21 +1,28 @@
 import FrameworkCard, { IFrameworkCard } from "./framework-card";
 import DjangoIcon from "../assets/django.svg";
 import NextIcon from "../assets/nextjs.svg";
+import RustIcon from "../assets/rust.svg";
 import GoIcon from "../assets/go.svg";
 import styles from "../styles/framework.module.css";
 
 const SERVER_LIST = [
   {
-    path: "/server-guide/django",
-    logo: DjangoIcon,
-    alt: "django",
-    title: "Deploy Django App",
-  },
-  {
     path: "/server-guide/nextjs",
     logo: NextIcon,
     alt: "nextjs",
     title: "Deploy Next App",
+  },
+  {
+    path: "/server-guide/rust",
+    logo: RustIcon,
+    alt: "rust",
+    title: "Deploy Rust App",
+  },
+  {
+    path: "/server-guide/django",
+    logo: DjangoIcon,
+    alt: "django",
+    title: "Deploy Django App",
   },
   {
     path: "/server-guide/go",
