@@ -61,6 +61,7 @@ export const Pages = [
   ["Deploy Rust App", "/server-guide/rust"],
   ["Deploy Django App", "/server-guide/django"],
   ["Deploy Go App", "/server-guide/go"],
+  ["Deploy Rails App", "/server-guide/rails"],
   ["Spheron API", "/rest-api"],
   ["Spheron SDK", "/sdk"],
   ["Storage SDK", "/sdk/storage"],

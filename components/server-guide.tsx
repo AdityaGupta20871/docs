@@ -3,6 +3,7 @@ import DjangoIcon from "../assets/django.svg";
 import NextIcon from "../assets/nextjs.svg";
 import RustIcon from "../assets/rust.svg";
 import GoIcon from "../assets/go.svg";
+import RailsIcon from "../assets/rails.svg";
 import styles from "../styles/framework.module.css";
 
 const SERVER_LIST = [
@@ -29,6 +30,12 @@ const SERVER_LIST = [
     logo: GoIcon,
     alt: "go",
     title: "Deploy Go App",
+  },
+  {
+    path: "/server-guide/rails",
+    logo: RailsIcon,
+    alt: "rails",
+    title: "Deploy Rails App",
   },
 ];
 
