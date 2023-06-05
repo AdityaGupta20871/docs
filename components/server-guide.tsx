@@ -4,6 +4,7 @@ import NextIcon from "../assets/nextjs.svg";
 import RustIcon from "../assets/rust.svg";
 import GoIcon from "../assets/go.svg";
 import RailsIcon from "../assets/rails.svg";
+import ExpressIcon from "../assets/express.svg";
 import styles from "../styles/framework.module.css";
 
 const SERVER_LIST = [
@@ -36,6 +37,12 @@ const SERVER_LIST = [
     logo: RailsIcon,
     alt: "rails",
     title: "Deploy Rails App",
+  },
+  {
+    path: "/server-guide/express",
+    logo: ExpressIcon,
+    alt: "express",
+    title: "Deploy Express App",
   },
 ];
 

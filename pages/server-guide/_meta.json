@@ -2,5 +2,7 @@
   "nextjs": "Deploy Next App",
   "rust": "Deploy Rust App",
   "django": "Deploy Django App",
-  "go": "Deploy Go App"
+  "go": "Deploy Go App",
+  "rails": "Deploy Rails App",
+  "express": "Deploy Express App"
 }
