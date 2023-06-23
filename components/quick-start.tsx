@@ -33,6 +33,12 @@ const QUICK_START_LIST = [
     body: "Fast & reliable access to pinned content.",
   },
   {
+    path: "/gateways/dedicated",
+    emoji: "⛩️",
+    title: "Gateways",
+    body: "Fast & reliable access to pinned content.",
+  },
+  {
     path: "/framework-guide",
     emoji: "📍",
     title: "Framework Guide",
@@ -73,6 +79,12 @@ const QUICK_START_LIST = [
     emoji: "🌀",
     title: "Github Actions",
     body: "Actions for working with Clusters.",
+  },
+  {
+    path: "/terraform",
+    emoji: "⚙️",
+    title: "Spheron Terraform",
+    body: "Deploy compute instances with Terraform and the Spheron provider.",
   },
 ];
 
