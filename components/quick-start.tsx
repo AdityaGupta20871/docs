@@ -33,12 +33,6 @@ const QUICK_START_LIST = [
     body: "Fast & reliable access to pinned content.",
   },
   {
-    path: "/gateways/dedicated",
-    emoji: "⛩️",
-    title: "Gateways",
-    body: "Fast & reliable access to pinned content.",
-  },
-  {
     path: "/framework-guide",
     emoji: "📍",
     title: "Framework Guide",
