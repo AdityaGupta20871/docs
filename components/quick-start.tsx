@@ -78,7 +78,7 @@ const QUICK_START_LIST = [
     path: "/terraform",
     emoji: "⚙️",
     title: "Spheron Terraform",
-    body: "Deploy compute instances with Terraform and the Spheron provider.",
+    body: "Deploy compute instances with Terraform.",
   },
 ];
 
