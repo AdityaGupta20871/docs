@@ -15,7 +15,7 @@ Before you begin, please ensure that you have the following prerequisites instal
 ## Installation
 
 Spheron terraform provider can be accessed here:
-[Spheron Terraform Provider](https://registry.terraform.io/providers/ilij4/spherontest/latest/docs)
+[Spheron Terraform Provider](https://registry.terraform.io/providers/spheronFdn/spheron/latest)
 
 To install the Spheron provider plugin, follow these steps:
 
@@ -29,8 +29,8 @@ To install the Spheron provider plugin, follow these steps:
 terraform {
   required_providers {
     spheron = {
+      source = "spheronFdn/spheron"
       version = "1.0.0"
-      source  = "spheron/spheron"
     }
   }
 }
@@ -69,8 +69,8 @@ terraform init
 terraform {
   required_providers {
     spheron = {
+      source = "spheronFdn/spheron"
       version = "1.0.0"
-      source  = "spheron/spheron"
     }
   }
 }
@@ -364,7 +364,7 @@ Read-Only:
 
 For more information on using Terraform and the Spheron provider, you can refer to the following resources:
 
-[Spheron Terraform Provider](https://registry.terraform.io/providers/ilij4/spherontest/latest/docs) 
+[Spheron Terraform Provider](https://registry.terraform.io/providers/spheronFdn/spheron/latest) 
 
 [Terraform Documentation](https://developer.hashicorp.com/terraform)
 
